@@ -2,7 +2,7 @@ var cheerio = require("cheerio");
 var axios = require("axios");
 
 console.log("\n***********************************\n" +
-    "scraping\n" +
+    "scraping npr" +
     "\n***********************************\n");
 
 axios.get("http://www.npr.org/sections/news/").then(function (response) {
@@ -10,7 +10,7 @@ axios.get("http://www.npr.org/sections/news/").then(function (response) {
     var results = [];
 
     $("article").each(function (i, element) {
-        var title = $(element).children(".item-info").children(".title").children("a").text();
+        var title = $(element).children(".item-info-wrap").children().children("h2.title").text();
 
         var link = $(element).children().children().children().attr("href");
 
