@@ -11,12 +11,14 @@ axios.get("http://www.npr.org/sections/news/").then(function (response) {
 
     $("article").each(function (i, element) {
         var title = $(element).children(".item-info-wrap").children().children("h2.title").text();
-
-        var link = $(element).children().children().children().attr("href");
+        var url = $(element).children().children().children().attr("href");
+        
+        var summary = $(element).children(".item-info-wrap").children().children("p.teaser").text();
 
         results.push({
-            title: title,
-            link: link
+            headline: title,
+            url: url,
+            summary: summary
         });
     });
 
