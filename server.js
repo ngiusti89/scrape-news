@@ -2,42 +2,55 @@ var cheerio = require("cheerio");
 var axios = require("axios");
 var express = require("express");
 var mongojs = require("mongojs");
+var mongoose = require("mongoose");
 
 var app = express();
 
-var databaseUrl = "scrapedNPR";
-var collections = ["scrapedData"];
+app.use(logger("dev"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static("public"));
 
-var db = mongojs(databaseUrl, collections);
-db.on("error", function (error) {
-    console.log("Database Error:", error);
-});
+var db = require("./models");
+var PORT = 3000;
 
-app.get("/", function (req, res) {
-    res.send("Hello world");
+// var databaseUrl = "scrapedNPR";
+// var collections = ["scrapedData"];
+
+// var db = mongojs(databaseUrl, collections);
+// db.on("error", function (error) {
+//     console.log("Database Error:", error);
+// });
+
+mongoose.connect("mongodb://localhost/unit18Populater", { useNewUrlParser: true });
+
+app.get("/scrape", function (req, res) {
+    axios.get("http://www.npr.org/sections/news/").then(function (response) {
+        var $ = cheerio.load(response.data);
+
+        $("article").each(function (i, element) {
+            var result = {};
+            result.title = $(this).children(".item-info-wrap").children().children("h2.title").text();
+            result.url = $(this).children().children().children().attr("href");
+            result.summary = $(this).children(".item-info-wrap").children().children("p.teaser").text();
+
+            db.article.create(result).then(function (dbarticle) {
+                console.log(dbarticle);
+            }).catch(function (err) {
+                console.log(err);
+            });
+
+            // results.push({
+            //     headline: title,
+            //     url: url,
+            //     summary: summary
+            // });
+        });
+        // console.log(results);
+        res.send("Scrape Complete");
+    });
 });
 
 console.log("\n***********************************\n" +
     "scraping npr" +
     "\n***********************************\n");
-
-axios.get("http://www.npr.org/sections/news/").then(function (response) {
-    var $ = cheerio.load(response.data);
-    var results = [];
-
-    $("article").each(function (i, element) {
-        var title = $(element).children(".item-info-wrap").children().children("h2.title").text();
-        var url = $(element).children().children().children().attr("href");
-
-        var summary = $(element).children(".item-info-wrap").children().children("p.teaser").text();
-
-        results.push({
-            headline: title,
-            url: url,
-            summary: summary
-        });
-    });
-
-    console.log(results);
-
-});
