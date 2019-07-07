@@ -22,7 +22,7 @@ var PORT = 3000;
 //     console.log("Database Error:", error);
 // });
 
-mongoose.connect("mongodb://localhost/unit18Populater", { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost/scrapeNPR", { useNewUrlParser: true });
 
 app.get("/scrape", function (req, res) {
     axios.get("http://www.npr.org/sections/news/").then(function (response) {
@@ -47,10 +47,23 @@ app.get("/scrape", function (req, res) {
             // });
         });
         // console.log(results);
-        res.send("Scrape Complete");
+        res.send("scrape complete");
     });
 });
 
-console.log("\n***********************************\n" +
-    "scraping npr" +
-    "\n***********************************\n");
+app.get("/articles", function (req, res) {
+    db.article.find({}).then(function (dbarticle) {
+        client
+        res.json(dbArticle);
+    }).catch(function (err) {
+        res.json(err);
+    });
+});
+
+app.listen(PORT, function () {
+    console.log("App running on port " + PORT + "!");
+});
+
+// console.log("\n***********************************\n" +
+//     "scraping npr" +
+//     "\n***********************************\n");
