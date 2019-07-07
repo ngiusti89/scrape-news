@@ -13,8 +13,12 @@ var articleSchema = new Schema({
     summary: {
         type: String
     },
-    note: {
+    comment: {
         type: Schema.Types.ObjectId,
-        ref: "Note"
+        ref: "comment"
     }
-})
+});
+
+var article = mongoose.model("article", articleSchema);
+
+module.exports = article;
