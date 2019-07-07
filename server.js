@@ -10,9 +10,9 @@ axios.get("http://www.npr.org/sections/news/").then(function (response) {
     var results = [];
 
     $("article").each(function (i, element) {
-        var title = $(element).children("item-info").children(".title").children("a").text();
+        var title = $(element).children(".item-info").children(".title").children("a").text();
 
-        var link = $(element).children("item-info").find("h2.title").find("a").attr("href");
+        var link = $(element).children().children().children().attr("href");
 
         results.push({
             title: title,
